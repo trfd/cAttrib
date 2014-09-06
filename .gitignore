@@ -19,3 +19,71 @@
 *.exe
 *.out
 *.app
+
+# Ignore Ninja and CMake
+
+/build/
+/ninja/
+/cmake/
+
+# Ignore Most of LLVM repo
+
+# Keep only llvm/tool/clang
+
+/llvm/*
+
+!/llvm/tools
+
+/llvm/tools/*
+
+!/llvm/tools/clang
+
+# Keep only
+# - llvm/tools/clang/include/clang/Basic/Attr.td
+# - llvm/tools/clang/lib/Sema/SemaDeclAttr.cpp
+# - llvm/tools/clang/tools/extra/cAttrib
+
+/llvm/tools/clang/*
+
+!/llvm/tools/clang/include
+!/llvm/tools/clang/lib
+!/llvm/tools/clang/tools
+
+
+## llvm/tools/clang/include/clang/Basic/Attr.td
+
+/llvm/tools/clang/include/*
+
+!/llvm/tools/clang/include/clang
+
+/llvm/tools/clang/include/clang/*
+
+!/llvm/tools/clang/include/clang/Basic
+
+/llvm/tools/clang/include/clang/Basic/*
+
+!/llvm/tools/clang/include/clang/Basic/Attr.td
+
+
+## llvm/tools/clang/lib/Sema/SemaDeclAttr.cpp
+
+/llvm/tools/clang/lib/*
+
+!/llvm/tools/clang/lib/Sema
+
+/llvm/tools/clang/lib/Sema/*
+
+!/llvm/tools/clang/lib/Sema/SemaDeclAttr.cpp
+
+## llvm/tools/clang/tools/extra/cAttrib
+
+/llvm/tools/clang/tools/*
+
+!/llvm/tools/clang/tools/extra
+
+/llvm/tools/clang/tools/extra/*
+
+!/llvm/tools/clang/tools/extra/cAttrib
+
+
+
