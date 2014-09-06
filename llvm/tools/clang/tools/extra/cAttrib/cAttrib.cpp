@@ -6,8 +6,6 @@
 //  Copyright (c) 2014 TRFD. All rights reserved.
 //
 
-
-
 #include <iostream>
 
 #include <clang/Frontend/FrontendActions.h>
@@ -22,15 +20,24 @@
 
 llvm::cl::OptionCategory CAttrib::optionCategory("cAttrib Options");
 
-static cl::extrahelp CAttrib::commonHelp(CommonOptionsParser::HelpMessage);
+cl::extrahelp CAttrib::commonHelp(CommonOptionsParser::HelpMessage);
 
-static cl::extrahelp CAttrib::moreHelp("\n... More Help");
+cl::extrahelp CAttrib::moreHelp("\n... More Help");
 
-static DeclarationMatcher CAttrib::matcher = decl(hasAttr(clang::attr::CAttrib)).bind("CAttrib");
+DeclarationMatcher CAttrib::matcher = decl(hasAttr(clang::attr::CAttrib)).bind("CAttrib");
+
+
+CAttrib::CAttrib() : m_attrCallback(*this)
+{}
 
 inline void CAttrib::setVerbose(bool verb_)
 {
     m_attrCallback._verbose = verb_;
+}
+
+void CAttrib::registerSubAttr(const std::string& str_ , const SubAttrCallback& clbk_)
+{
+    m_subAttrCallbackMap[str_] = clbk_;
 }
 
 int CAttrib::run(int argc, const char * argv[])
@@ -45,6 +52,12 @@ int CAttrib::run(int argc, const char * argv[])
     finder.addMatcher(matcher, &m_attrCallback);
     
     return tool.run(newFrontendActionFactory(&finder).get());
+}
+
+void CAttrib::checkSubAttr(CAttribAttr* attr_)
+{
+    std::cout<<"----|| SubAttr:"<<attr_->getSubAttr().str()<<"\n";
+    std::cout<<"----|| Size:"<<attr_->args_size()<<"\n";
 }
 
 #pragma region AttrMatchCallback Implementation
@@ -66,7 +79,7 @@ void CAttrib::AttrMatchCallback::run(const MatchFinder::MatchResult &Result)
             if((*it)->getKind() != clang::attr::CAttrib)
                 continue;
             
-            std::cout<<"----|| Size:"<<static_cast<CAttribAttr*>(*it)->args_size()<<"\n";
+            _parent.checkSubAttr(static_cast<CAttribAttr*>(*it));
         }
     }
 }
