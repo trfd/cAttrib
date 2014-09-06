@@ -14,33 +14,72 @@
 #include <clang/Tooling/CommonOptionsParser.h>
 #include <clang/Tooling/Tooling.h>
 
-
 #include <llvm/Support/CommandLine.h>
 
-#include "AttributeMatcher.h"
+#include "cAttrib.h"
 
-using namespace clang::tooling;
-using namespace llvm;
+#pragma region CAttrib Implementation
 
-static llvm::cl::OptionCategory s_cAttribOptionCategory("cAttrib Options");
+llvm::cl::OptionCategory CAttrib::optionCategory("cAttrib Options");
 
-static cl::extrahelp s_commonHelp(CommonOptionsParser::HelpMessage);
+static cl::extrahelp CAttrib::commonHelp(CommonOptionsParser::HelpMessage);
 
-static cl::extrahelp s_moreHelp("\n... More Help");
+static cl::extrahelp CAttrib::moreHelp("\n... More Help");
 
-int main(int argc, const char * argv[])
+static DeclarationMatcher CAttrib::matcher = decl(hasAttr(clang::attr::CAttrib)).bind("CAttrib");
+
+inline void CAttrib::setVerbose(bool verb_)
 {
-    
-    CommonOptionsParser optionsParser(argc,argv, s_cAttribOptionCategory);
+    m_attrCallback._verbose = verb_;
+}
+
+int CAttrib::run(int argc, const char * argv[])
+{
+    CommonOptionsParser optionsParser(argc,argv, optionCategory);
     
     ClangTool tool(optionsParser.getCompilations(),
                    optionsParser.getSourcePathList());
     
-    AttributePrinter attribPrinter;
     MatchFinder finder;
     
-    finder.addMatcher(AttribMatcher, &attribPrinter);
+    finder.addMatcher(matcher, &m_attrCallback);
     
     return tool.run(newFrontendActionFactory(&finder).get());
 }
 
+#pragma region AttrMatchCallback Implementation
+
+CAttrib::AttrMatchCallback::AttrMatchCallback(CAttrib& p_)
+: _parent(p_)
+{}
+
+void CAttrib::AttrMatchCallback::run(const MatchFinder::MatchResult &Result)
+{
+    if (const Decl *attrDecl = Result.Nodes.getNodeAs<clang::Decl>("CAttrib"))
+    {
+        if(_verbose)
+            attrDecl->dump();
+        
+        for(Decl::attr_iterator it = attrDecl->attr_begin() ;
+            it != attrDecl->attr_end() ; ++it)
+        {
+            if((*it)->getKind() != clang::attr::CAttrib)
+                continue;
+            
+            std::cout<<"----|| Size:"<<static_cast<CAttribAttr*>(*it)->args_size()<<"\n";
+        }
+    }
+}
+
+#pragma endregion
+
+#pragma endregion
+
+#pragma region Test
+
+int main(int argc, const char * argv[])
+{
+    return CAttrib().run(argc,argv);
+}
+
+#pragma endregion
