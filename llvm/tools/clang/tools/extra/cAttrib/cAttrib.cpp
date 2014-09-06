@@ -16,6 +16,8 @@
 
 #include "cAttrib.h"
 
+//#define DEBUG_EXE
+
 #pragma region CAttrib Implementation
 
 llvm::cl::OptionCategory CAttrib::optionCategory("cAttrib Options");
@@ -94,6 +96,7 @@ void CAttrib::AttrMatchCallback::run(const MatchFinder::MatchResult &Result)
 
 #pragma region Test
 
+#ifdef DEBUG_EXE
 
 CAttrib::Error test(CAttribAttr* attr_, const Decl* decl_)
 {
@@ -111,5 +114,7 @@ int main(int argc, const char * argv[])
     
     return mainCAttrib.run(argc,argv);
 }
+
+#endif
 
 #pragma endregion

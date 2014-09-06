@@ -1,10 +1,10 @@
 set(LLVM_LINK_COMPONENTS support)
 set(LLVM_USED_LIBS clangTooling clangBasic clangAST)
 
-add_clang_executable(cAttrib
+add_clang_library(cAttrib
   cAttrib.cpp
-  )
-target_link_libraries(cAttrib
+
+  LINK_LIBS
   clangTooling
   clangBasic
   clangASTMatchers
