@@ -25,12 +25,14 @@ public:
     
     enum Error
     {
-        WRONG_ARG_COUNT,
-        ARG_SYNTAX,
-        INCORRECT_ARG_VALUE
+        no_error    = 0
     };
     
-    typedef std::function<Error(CAttribAttr*,Decl*)> SubAttrCallback;
+    typedef std::function<Error(CAttribAttr*,const Decl*)> SubAttrCallback;
+    
+    typedef std::map<std::string,SubAttrCallback> SubAttrCallbackMap;
+    
+    typedef SubAttrCallbackMap::iterator SubAttrCallbackMap_it;
     
     #pragma region Static Members
     
@@ -75,7 +77,7 @@ private:
     // \brief Check if attributes match any of
     // the registred sub-cattributes
     // \see registerSubAttr
-    void checkSubAttr(CAttribAttr* attr_);
+    void checkSubAttr(CAttribAttr* attr_,const Decl* decl_);
     
     #pragma region Private Data Members
     

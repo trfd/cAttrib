@@ -54,10 +54,14 @@ int CAttrib::run(int argc, const char * argv[])
     return tool.run(newFrontendActionFactory(&finder).get());
 }
 
-void CAttrib::checkSubAttr(CAttribAttr* attr_)
+void CAttrib::checkSubAttr(CAttribAttr* attr_,const Decl* decl_)
 {
-    std::cout<<"----|| SubAttr:"<<attr_->getSubAttr().str()<<"\n";
-    std::cout<<"----|| Size:"<<attr_->args_size()<<"\n";
+    SubAttrCallbackMap_it it = m_subAttrCallbackMap.find(attr_->getSubAttr().str());
+    
+    if(it == m_subAttrCallbackMap.end())
+        return;
+    
+    (it->second)(attr_,decl_);
 }
 
 #pragma region AttrMatchCallback Implementation
@@ -79,7 +83,7 @@ void CAttrib::AttrMatchCallback::run(const MatchFinder::MatchResult &Result)
             if((*it)->getKind() != clang::attr::CAttrib)
                 continue;
             
-            _parent.checkSubAttr(static_cast<CAttribAttr*>(*it));
+            _parent.checkSubAttr(static_cast<CAttribAttr*>(*it),attrDecl);
         }
     }
 }
@@ -90,9 +94,22 @@ void CAttrib::AttrMatchCallback::run(const MatchFinder::MatchResult &Result)
 
 #pragma region Test
 
+
+CAttrib::Error test(CAttribAttr* attr_, const Decl* decl_)
+{
+    std::cout<<"----|| SubAttr:"<<attr_->getSubAttr().str()<<"\n";
+    std::cout<<"----|| Size:"<<attr_->args_size()<<"\n";
+    
+    return CAttrib::no_error;
+}
+
 int main(int argc, const char * argv[])
 {
-    return CAttrib().run(argc,argv);
+    CAttrib mainCAttrib;
+    
+    mainCAttrib.registerSubAttr("test",&test);
+    
+    return mainCAttrib.run(argc,argv);
 }
 
 #pragma endregion
