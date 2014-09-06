@@ -41,6 +41,7 @@
 # Keep only
 # - llvm/tools/clang/include/clang/Basic/Attr.td
 # - llvm/tools/clang/lib/Sema/SemaDeclAttr.cpp
+# - llvm/tools/clang/tools/extra/CMakeLists.txt
 # - llvm/tools/clang/tools/extra/cAttrib
 
 /llvm/tools/clang/*
@@ -83,6 +84,7 @@
 
 /llvm/tools/clang/tools/extra/*
 
+!/llvm/tools/clang/tools/extra/CMakeLists.txt
 !/llvm/tools/clang/tools/extra/cAttrib
 
 
