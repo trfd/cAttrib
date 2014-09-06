@@ -452,7 +452,7 @@ def CarriesDependency : InheritableParamAttr {
 // and usage of attributes
 def CAttrib : InheritableAttr {
   let Spellings = [GCC<"cattrib">, CXX11<"","cattrib">,Keyword<"_cattrib">,Keyword<"__cattrib">];
-  let Args = [VariadicExprArgument<"Args">];
+  let Args = [StringArgument<"SubAttr">,VariadicExprArgument<"Args">];
   let Documentation = [Undocumented];
 }
 

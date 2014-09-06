@@ -1492,8 +1492,15 @@ static void handleMallocAttr(Sema &S, Decl *D, const AttributeList &Attr) {
 // This simply passes every expr arguments to the CAttribAttr
 static void handleCAttrib(Sema &S, Decl *D, const AttributeList &Attr) {
     
+    StringRef MetaDataName;
+    if (!S.checkStringLiteralArgumentAttr(Attr, 0, MetaDataName))
+    {
+        // Should send Diag
+        return;
+    }
+    
     SmallVector<Expr*, 8> cattribArgs;
-    for (unsigned I = 0; I < Attr.getNumArgs(); ++I)
+    for (unsigned I = 1; I < Attr.getNumArgs(); ++I)
     {
         cattribArgs.push_back(Attr.getArgAsExpr(I));
     }
@@ -1502,7 +1509,7 @@ static void handleCAttrib(Sema &S, Decl *D, const AttributeList &Attr) {
     unsigned Size = cattribArgs.size();
     //llvm::array_pod_sort(Start, Start + Size);
     D->addAttr(::new (S.Context)
-               CAttribAttr(Attr.getRange(), S.Context, Start, Size,
+               CAttribAttr(Attr.getRange(), S.Context, MetaDataName, Start, Size,
                            Attr.getAttributeSpellingListIndex()));
     return;
 }
