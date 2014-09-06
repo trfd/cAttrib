@@ -1,5 +1,11 @@
+#!/bin/bash
 
-wd=$pwd
+if [ -f llvm ]
+	then
+		mv llvm llvm-old
+fi
+
+wd=`pwd`
 
 ## Get LLVM , clang and extras
 git clone http://llvm.org/git/llvm.git
@@ -15,6 +21,7 @@ git checkout master
 git clone https://github.com/martine/ninja.git
 cd ninja
 git checkout release
+
 ./bootstrap.py
 sudo cp ninja /usr/bin/
 cd $wd
@@ -24,13 +31,3 @@ git checkout next
 ./bootstrap
 make
 sudo make install
-cd $wd
-
-mkdir build && cd build
-cmake -G Ninja ../llvm -DLLVM_BUILD_TESTS=ON  # Enable tests; default is off.
-ninja
-ninja check       # Test LLVM only.
-ninja clang-test  # Test Clang only.
-ninja install
-cd $wd/build
-ccmake ../llvm
