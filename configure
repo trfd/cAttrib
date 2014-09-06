@@ -1,0 +1,36 @@
+
+wd=$pwd
+
+## Get LLVM , clang and extras
+git clone http://llvm.org/git/llvm.git
+cd llvm/tools
+git clone http://llvm.org/git/clang.git
+cd clang/tools
+git clone http://llvm.org/git/clang-tools-extra.git extra
+
+## Get cAttrib (again) and ninja
+cd $wd
+git clone https://github.com/trfd/cAttrib.git
+git checkout master
+git clone https://github.com/martine/ninja.git
+cd ninja
+git checkout release
+./bootstrap.py
+sudo cp ninja /usr/bin/
+cd $wd
+git clone git://cmake.org/stage/cmake.git
+cd cmake
+git checkout next
+./bootstrap
+make
+sudo make install
+cd $wd
+
+mkdir build && cd build
+cmake -G Ninja ../llvm -DLLVM_BUILD_TESTS=ON  # Enable tests; default is off.
+ninja
+ninja check       # Test LLVM only.
+ninja clang-test  # Test Clang only.
+ninja install
+cd $wd/build
+ccmake ../llvm
