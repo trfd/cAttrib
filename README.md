@@ -11,15 +11,17 @@ When done, run the following commands:
 
 	cd build
 	cmake -G Ninja ../llvm
-	
-	ninja
-	ninja install
-
-	ccmake ../llvm
 
 Then build the LLVM using the command:
-
 ***This step is very long!!***
 
 	ninja
+
+	ninja install
+	ccmake ../llvm
+	ninja
+
+
+
+
 
